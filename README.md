@@ -10,4 +10,6 @@
 
 3：如果想了解我，可以查看 [《我是谁》](https://mp.weixin.qq.com/s/ezBrPc5OIjUlHvCBOAVWKg)
 
- 
+也欢迎关注我的公众号（ID：yudadanwx，虞大胆的叽叽喳喳） ，我会持续性更新文章，主要来源于我的新得体会。
+
+![公众号](https://notes.newyingyong.cn/static/image/wxgzh/qrcode_258.jpg)
