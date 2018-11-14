@@ -151,3 +151,4 @@ server {
     ssl_certificate /etc/cert/fullchain.pem;
     ssl_certificate_key /etc/cert/privkey.pem;
 ```
+

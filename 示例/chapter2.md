@@ -575,6 +575,8 @@ $rsapublickey  =  dirname(__FILE__) . "/rsapublickey.pem";
 //假如返回 1 表示验证成功
 var_dump(sign_verify("hello", $rsaprivatekey, $rsapublickey));
 
+```
+
 13：2.11.2 小节
 
 生成参数文件和密钥对文件：
