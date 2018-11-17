@@ -162,7 +162,7 @@ $ certbot-auto certonly --standalone \
 
 （2）申请 ECDSA 证书
 
-```
+``` 
 # 生成一个 ECC 密钥对
 $ openssl ecparam -genkey -name secp384r1 -noout -out key.pem 
 
