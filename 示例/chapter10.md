@@ -197,6 +197,7 @@ ssl_prefer_server_ciphers   on;
 $ man s_client
 
 $ openssl s_client -connect www.example.com:443
+```
 
 获取服务器证书并查看：
 
@@ -421,3 +422,172 @@ http {
       }
    }
 ```
+
+（3）双证书支持
+
+```
+server {
+    listen              443 ssl;
+    server_name         www.example.com;
+
+    ssl_certificate     www.example.com.rsa.crt;
+    ssl_certificate_key www.example.com.rsa.key;
+
+    ssl_certificate     www.example.com.ecdsa.crt;
+    ssl_certificate_key www.example.com.ecdsa.key;
+}
+```
+
+测试是否支持双证书：
+
+```
+$ openssl s_client -connect www.example.com:443 -cipher 'aECDSA'
+
+$ openssl s_client -connect www.example.com:443 -cipher 'aRSA'  
+```
+
+（4）Nginx+Openssl patch
+
+```
+# 下载 OpenSSL 库
+$ wget https://www.openssl.org/source/openssl-1.1.0f.tar.gz
+
+# 下载 patch
+$ wget "https://gitlab.com/buik/openssl/repository/openssl-patch/archive.zip"
+
+# 解压缩 patch 和 OpenSSL 库
+$ unzip  openssl-openssl-patch-fee83cc1a9d1a1d2e35a1da18d3af5af4af32ca8.zip
+$ tar xvf openssl-1.1.0f.tar.gz
+
+$ cd openssl-1.1.0f  
+
+# 打 patch
+$ patch -p1  < ../openssl-openssl-patch-fee83cc1a9d1a1d2e35a1da18d3af5af4af32ca8/openssl-1.1/OpenSSL1.1g-equal-preference-cipher-groups.patch
+```
+
+配置等价加密算法组：
+
+```
+#nginx 配置
+
+ssl_ciphers  '[ECDHE-RSA-AES128-GCM-SHA256|ECDHE-RSA-CHACHA20-POLY1305]' ;
+```
+
+（5）通配符证书
+
+```
+http {
+
+   ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+   ssl_certificate      cert.pem;
+   ssl_certificate_key  cert.key;
+
+   server {
+      listen  443 ssl;
+      server_name  www.example.com;
+   }
+
+   server {
+      listen  443 ssl;
+      server_name  www.example.cn;
+   }
+}
+```
+
+（6）Session ID 会话恢复
+
+```
+ssl_session_cache builtin:1000 shared:TLS:10m;
+```
+
+（7）Session Ticket 会话恢复
+
+```
+ssl_session_tickets ticket.key;
+```
+
+配置：
+
+```
+ssl_session_tickets on  ;
+ssl_session_tickets newticket.key ;
+ssl_session_tickets ticket.key;
+```
+
+（8）OCSP 封套
+
+```
+ssl_stapling on;
+ssl_stapling_verify on;
+ssl_trusted_certificate /path/to/root_CA_cert_plus_intermediates;
+```
+
+（9）动态调整 TLS 记录层协议大小
+
+```
+# 下载 patch
+$ wget https://raw.githubusercontent.com/cloudflare/sslconfig/master/patches/nginx__dynamic_tls_records.patch
+
+# 下载 OpenSSL 库
+$ wget https://www.openssl.org/source/openssl-1.1.0f.tar.gz
+
+$ tar xvf openssl-1.1.0f.tar.gz
+
+# 合并
+$ cd openssl-1.1.0f  
+$ patch -p1 < nginx__dynamic_tls_records.patch
+```
+
+（10）证书透明度支持
+
+```
+$ sudo apt-get install golang
+$ wget -O ct-submit.zip -c https://github.com/grahamedgecombe/nginx-ct/archive/master.zip
+$ unzip ct-submit.zip
+$ cd ct-submit-master
+$ go build
+ 
+$ ./ct-submit-master ct.googleapis.com/aviator </www/chain.crt >/www/scts/aviator.sct
+$ ./ct-submit-master ct1.digicert-ct.com/log </www/chain.crt >/www/scts/digicert.sct
+```
+
+Nginx 支持 SCT：
+
+```
+# 下载 nginx-ct
+$ wget -O nginx-ct.zip -c https://github.com/grahamedgecombe/nginx-ct/archive/master.zip
+$ unzip nginx-ct.zip
+
+# 下载 OpenSSL 库
+$ wget https://www.openssl.org/source/openssl-1.1.0f.tar.gz
+$ tar xvf nginx-1.13.5.tar.gz
+$ cd nginx-1.13.5
+
+$ ./configure \
+    --prefix=/usr/local/nginx1.13 \
+    --with-pcre=../pcre-8.41 \
+    --with-zlib=../zlib-1.2.11 \
+    --with-http_ssl_module \
+    --with-stream \
+    --with-openssl=../openssl-1.1.0f \
+    --with-openssl-opt="enable-ec_nistp_64_gcc_128" \
+    --add-module=../nginx-ct-master
+
+$ make  
+$ make install
+```
+
+配置：
+
+```
+server {
+    listen  443 ssl;
+    server_name  www.example.com;
+    ssl_ct               on;
+    # 加载目录
+    ssl_ct_static_scts   /www/scts/;
+}
+```
+
+6：10.4.2 小节
+

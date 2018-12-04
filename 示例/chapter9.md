@@ -207,7 +207,6 @@ server {
 ```
 $ apt-get install build-essential libnghttp2-dev libssl-dev
  
-```
 $ git clone https://github.com/tatsuhiro-t/nghttp2.git
 $ cd nghttp2
 $ autoreconf -i
