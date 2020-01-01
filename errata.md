@@ -2,10 +2,19 @@
 
 页码 | 错误点 | 更正
 ------------ | ------------- | ---------
-P216，6.7.5章节 | ` openssl req -in myreq.pem -noout -verify -key example_csr.pem `|  `openssl req -in example_csr.pem -noout -verify `
-P232，6.7.10 章节| 使用不支持 OCSP 封套的 HTTPS 网站进行演示（letsencrypt.org），使用支持 OCSP 封套的 HTTPS 网站进行演示（www.baidu.com） | 写反了，letsencrypt.org 支持 OCSP 封套，而 www.baidu.com 不支持
+P107，3.2章节 |  第 9 行： 将主密钥转换为多个密码“快”  | “快”应改为"块"
+P107，3.2.1章节 |  倒数第 2 行： 客户端和服务器端持有一个密钥对，在客户端和服务器端连接的时候分别发送给对方 | 建议改为“客户端和服务器端各持有一份密钥对（公钥+私钥），在它们连接的时候都将自己的公钥发送给对方”似乎更好理解
+P124，3.3.1章节  | 倒数第 8 行，“服务器接收到验证消息后，使用加密块解密出摘要数据” 中的 “加密块” | 建议改成“密钥块”与上文保持名称一致。
 P148，5.2.1章节 | 第 9 行： `example_cert.pem` 表示 CSR 文件 | 其中的 `example_cert.pem` 应改为 `example_csr.pem`
 P158，5.6.2章节 | 添加 HSTS 配置，语句最后少了一个 ";"  | 在语句末尾添加一个分号";"
-P107，3.2章节 |  第 9 行： 将主密钥转换为多个密码“快”  | “快”应改为"块"
-P107，3.2.1章节 |  倒数第 2 行： 客户端和服务器端持有一个密钥对，在客户端和服务器端连接的时候分别发送给对方 | 改为“客户端和服务器端各持有一份密钥对（公钥+私钥），在它们连接的时候都将自己的公钥发送给对方”似乎更好理解
-
+P180，6.2.5章节 | 第 6，7, 14 行中出现的“范域名”的“范” | 应改为“泛”
+P216，6.7.5章节 | ` openssl req -in myreq.pem -noout -verify -key example_csr.pem `|  `openssl req -in example_csr.pem -noout -verify `
+P219，6.7.7章节 | 第 2 行，“查看那个 CA 机构签发了证书”中的 “那个” | 应改为 “哪个”
+P232，6.7.10章节| 使用不支持 OCSP 封套的 HTTPS 网站进行演示（letsencrypt.org），使用支持 OCSP 封套的 HTTPS 网站进行演示（www.baidu.com） | 写反了，letsencrypt.org 支持 OCSP 封套，而 www.baidu.com 不支持
+P249，7.2.2章节 | “申请证书” 小节，倒数第 10 行“用验证密钥对的公钥验证签名”中的“验证密钥对” | 建议改为“校验密钥对”与上文保持名称一致。
+P257，7.3.6章节 | -d “表示要为那些主机生成证书”，“那些” | 应改为 “哪些”
+P350，7.3.6章节 | “（2）aECDSA” 下面的命令行不完整 | 应该在开头加上“$ openssl”
+P360，9.1.2章节 | 第5行，“移除”  | 应改为 “移动”
+P449，10.3.2章节 | htts 少了一个 p字母 | 应改为 “https”
+P452，10.3.3章节 | apt 误写为 apr | 应该为 “apt”
+P486，10.5.3章节 | 倒数第 14 行 “ssl_certificate_key    www.example.com” | 应改为 “ssl_certificate_key    www.example.key.pem”
